@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Xianyun{% endblock %}
+
+{% block page_content%}
+<div class="page-header">
+    <h1>你好，{% if name %}{{ name }}{% else %}游客{% endif %}</h1>
+    <h1>欢迎来到闲云！</h1>
+</div>
+
+{{wtf.quick_form(form)}}
+{% endblock%}
