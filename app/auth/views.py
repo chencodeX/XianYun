@@ -1,7 +1,7 @@
 #!/usr/bin/evn python
 # -*- coding: utf-8 -*-
 from flask import render_template,redirect,request,url_for,flash,current_app
-from flask_login import login_user,logout_user,login_required
+from flask_login import login_user,logout_user,login_required,current_user
 from . import auth
 from ..model import User
 from .forms import LoginForm,RegistrationForm
@@ -41,3 +41,7 @@ def register():
         flash(u'你现在已经可以登录啦~')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html',form = form)
+
+# @auth.route('/confirm/<token>')
+# @login_required
+# def con

@@ -1,0 +1,13 @@
+亲爱的 {{ user.username }},
+
+欢迎来到闲云!
+
+要确认您的帐户，请点击以下链接:
+
+{{ url_for('auth.confirm', token=token, _external=True) }}
+
+贴心的,
+
+闲云开发者团队
+
+注意：不支持对此电子邮件地址的回复。
