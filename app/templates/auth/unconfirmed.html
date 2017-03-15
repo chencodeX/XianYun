@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}闲云 - 确认账号{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        你好, {{ current_user.username }}!
+    </h1>
+    <h3>您尚未确认帐户。</h3>
+    <p>
+        在您可以访问此网站之前，您需要确认您的帐户。
+        检查您的收件箱，您应该已经收到了一封包含确认链接的电子邮件。
+    </p>
+    <p>
+        需要重新发送确认邮件？
+        <a href="{{ url_for('auth.resend_confirmation') }}">点击这里</a>
+    </p>
+</div>
+{% endblock %}
