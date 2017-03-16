@@ -4,7 +4,7 @@ from flask import render_template,redirect,request,url_for,flash,current_app
 from flask_login import login_user,logout_user,login_required,current_user
 from . import auth
 from ..model import User
-from .forms import LoginForm,RegistrationForm
+from .forms import LoginForm,RegistrationForm,ChangePasswordForm,ResetPassWordForm,ResetSendEmailForm
 from .. import db
 from ..email import send_email
 
@@ -84,4 +84,50 @@ def resend_confirmation():
                user = current_user,token=token)
     return redirect(url_for('main.index'))
 
+
+@auth.route('/change-password',methods=['GET','POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.old_password.data):
+            current_user.password = form.password.data
+            db.session.add(current_user)
+            flash(u'密码已修改')
+            return redirect(url_for('main.index'))
+        else:
+            flash(u'密码错误')
+    return render_template('auth/change_password.html',form=form)
+
+
+@auth.route('/reset',methods=['GET','POST'])
+def password_reset_send_email():
+    if not current_user.is_anonymous :
+        redirect(url_for('main.index'))
+    form = ResetSendEmailForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.email.data).first()
+        if user:
+            token = user.generate_reset_password_token()
+            send_email(user.email,'重设密码','auth/email/reset_password',
+                       user = user , token=token,next = request.args.get('next'))
+        flash(u'一封邮件已经发送到了你的邮箱，请按照邮件内容重设密码。')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password.html',form = form)
+
+@auth.route('/reset/<token>',methods=['GET','POST'])
+def password_reset(token):
+    if not current_user.is_anonymous :
+        redirect(url_for('main.index'))
+    form = ResetPassWordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.email.data).first()
+        if user is None:
+            return redirect(url_for('main.index'))
+        if user.reset_password(token,form.password.data):
+            flash(u'密码重置成功')
+            return redirect(url_for('auth.login'))
+        else:
+            return redirect(url_for('main.index'))
+    return render_template('auth/reset_password.html',form=form)
 
