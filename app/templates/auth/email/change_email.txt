@@ -1,0 +1,11 @@
+亲爱的 {{ user.username }},
+
+请点击以下链接重置邮箱：
+
+{{ url_for('auth.change_email', token=token, _external=True) }}
+
+Sincerely,
+
+The Flasky Team
+
+Note: replies to this email address are not monitored.
