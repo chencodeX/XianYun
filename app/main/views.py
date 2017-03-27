@@ -9,7 +9,8 @@ from .. import db
 from ..model import User,Role,Permission,Post
 from ..email import send_email
 from ..decorators import admin_required
-import os,hashlib
+import os,hashlib,cv2
+import numpy as np
 # @main.route('/', methods=['GET', 'POST'])
 # def index():
 #     form = NameForm()
@@ -139,6 +140,14 @@ def edit_avatar():
                 (current_user.email + current_user.avatar_base).encode('utf-8')).hexdigest()
             base_path_1 = os.path.join(AVATAR_BASE_PATH, current_user.avatar_base + '.png')
             file.save(base_path_1)
+            image = cv2.imread(base_path_1)
+            img_arr = np.array(image)
+            [h,w,s]=img_arr.shape
+            avg = min(h, w)
+            hm = (h - avg)/2
+            wm = (w -avg)/2
+            out = img_arr[hm:hm + avg, wm:wm + avg, :]
+            cv2.imwrite(base_path_1, out)
             db.session.add(current_user)
             return redirect(url_for('.user', username=current_user.username))
         else:
