@@ -8,7 +8,7 @@ from .forms import EditProfileForm,EditProfileAdminForm,PostForm
 from .. import db
 from ..model import User,Role,Permission,Post
 from ..email import send_email
-from ..decorators import admin_required
+from ..decorators import admin_required,permission_required
 import os,hashlib,cv2
 import numpy as np
 # @main.route('/', methods=['GET', 'POST'])
@@ -64,7 +64,7 @@ def user(username):
     if user is None:
         abort(404)
     posts = user.posts.order_by(Post.timestamp.desc()).all()
-    return render_template('user.html',user=user,posts=posts)
+    return render_template('user.html',user=user,posts=posts,Permission=Permission)
 
 @main.route('/edit-profile',methods=['GET','POST'])
 @login_required
@@ -173,3 +173,71 @@ def edit(id):
         flash(u'博文已修改！')
     form.body.data = post.body
     return render_template('edit_post.html',form=form)
+
+
+@main.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    user = User.query.filter_by(username= username).first()
+    if user is None:
+        flash(u'用户不存在！')
+        return redirect(url_for('.index'))
+    if current_user.is_following(user):
+        flash(u'您已经在关注此用户。')
+        return redirect(url_for('.user', username=username))
+    current_user.follow(user)
+    flash(u'关注%s成功~'% str(username))
+    return redirect(url_for('.user', username=username))
+
+
+@main.route('/unfollow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash(u'用户不存在！')
+        return redirect(url_for('.index'))
+    if not current_user.is_following(user):
+        flash(u'您尚未关注此用户。')
+        return redirect(url_for('.user', username=username))
+    current_user.unfollow(user)
+    flash(u'取消关注%s成功~' % str(username))
+    return redirect(url_for('.user', username=username))
+
+
+@main.route('/followers/<username>')
+def followers(username):
+    user = User.query.filter_by(username= username).first()
+    if user is None:
+        flash(u'用户不存在！')
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followers.paginate(
+        page,per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+        error_out=False)
+    follows = [{'user': item.follower, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('followers.html', user=user, title=u"的关注者：",
+                           endpoint='.followers', pagination=pagination,
+                           follows=follows)
+
+
+
+
+@main.route('/followed-by/<username>')
+def followed_by(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash(u'用户不存在！')
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followed.paginate(
+        page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+        error_out=False)
+    follows = [{'user': item.followed, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('followers.html', user=user, title=u"关注了：",
+                           endpoint='.followed_by', pagination=pagination,
+                           follows=follows)

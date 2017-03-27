@@ -17,6 +17,8 @@ class Config:
     FLASKY_MAIL_SENDER = 'XianYun Admin <656558837@qq.com>'
     FLASK_ADMIN = '1105234003@qq.com'
     FLASKY_POSTS_PER_PAGE = 20
+    FLASKY_FOLLOWERS_PER_PAGE = 50
+
 
     AVATAR_PATH = os.path.join(os.getcwd(),'app')
     AVATAR_PATH = os.path.join(AVATAR_PATH, 'static')
