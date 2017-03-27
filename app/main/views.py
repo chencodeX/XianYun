@@ -3,13 +3,14 @@
 from datetime import datetime
 from flask import render_template,session,url_for,redirect,current_app,abort,flash
 from flask_login import login_user,logout_user,login_required,current_user
+from werkzeug import secure_filename
 from . import main
-from .forms import NameForm,EditProfileForm,EditProfileAdminForm
+from .forms import NameForm,EditProfileForm,EditProfileAdminForm,ChangeAvatarForm
 from .. import db
 from ..model import User,Role
 from ..email import send_email
 from ..decorators import admin_required
-
+import os,hashlib
 # @main.route('/', methods=['GET', 'POST'])
 # def index():
 #     form = NameForm()
@@ -89,3 +90,16 @@ def edit_profile_admin(id):
     form.location.data = user.location
     form.about_me.data = user.about_me
     return render_template('edit_profile.html',form = form,user=user)
+
+@main.route('/edit-avatar',methods=['GET','POST'])
+@login_required
+def edit_avatar():
+    form = ChangeAvatarForm()
+    if form.validate_on_submit():
+        AVATAR_BASE_PATH = current_app.config['AVATAR_PATH']
+        current_user.avatar_base = hashlib.md5((current_user.email+current_user.avatar_base).encode('utf-8')).hexdigest()
+        base_path_1 = os.path.join(AVATAR_BASE_PATH, current_user.avatar_base + '.png')
+        form.uploadfile.data.save(base_path_1)
+        db.session.add(current_user)
+        return redirect(url_for('.user',username = current_user.username))
+    return render_template('edit_avatar.html',form = form)

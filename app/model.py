@@ -3,8 +3,9 @@
 from werkzeug.security import generate_password_hash,check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_login import UserMixin,AnonymousUserMixin
-from flask import current_app
+from flask import current_app,url_for
 from datetime import datetime
+import os,cv2,hashlib
 from . import db ,login_manager
 
 
@@ -66,6 +67,8 @@ class User(UserMixin,db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
+    avatar_base = db.Column(db.String(64))
+
     def __init__(self,**kwargs):
         super(User,self).__init__(**kwargs)
 
@@ -75,6 +78,8 @@ class User(UserMixin,db.Model):
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
 
+        if self.email is not None and self.avatar_base is None:
+            self.avatar_base = hashlib.md5(self.email.encode('utf-8')).hexdigest()
 
     @property
     def password(self):
@@ -155,7 +160,30 @@ class User(UserMixin,db.Model):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
 
-
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        if self.avatar_base is None:
+            url = 'http://www.gravatar.com/avatar'
+            hash = 'd4c74594d84113932869575bd6'
+            return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+                url=url, hash=hash, size=size, default=default, rating=rating)
+        AVATAR_BASE_PATH =  current_app.config['AVATAR_PATH']
+        base_path = url_for('static', filename='avatar/'+self.avatar_base+'.png')
+        base_path_1 = os.path.join(AVATAR_BASE_PATH,self.avatar_base+'.png')
+        if os.path.exists(base_path_1):
+            base_path_size = url_for('static', filename='avatar/'+self.avatar_base+'_'+str(size)+'.png')
+            base_path_size_1 = os.path.join(AVATAR_BASE_PATH, self.avatar_base+'_'+str(size)+'.png')
+            if os.path.exists(base_path_size_1):
+                return base_path_size
+            else:
+                image = cv2.imread(base_path_1)
+                image_resize = cv2.resize(image,(size,size))
+                cv2.imwrite(base_path_size_1,image_resize)
+                return base_path_size
+        else:
+            url = 'http://www.gravatar.com/avatar'
+            hash = 'd4c74594d84113932869575bd6'
+            return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+                url=url, hash=hash, size=size, default=default, rating=rating)
 
     def __repr__(self):
         return '<User %r>' % self.username

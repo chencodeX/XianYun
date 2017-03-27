@@ -17,6 +17,10 @@ class Config:
     FLASKY_MAIL_SENDER = 'XianYun Admin <656558837@qq.com>'
     FLASK_ADMIN = '1105234003@qq.com'
 
+    AVATAR_PATH = os.path.join(os.getcwd(),'app')
+    AVATAR_PATH = os.path.join(AVATAR_PATH, 'static')
+    AVATAR_PATH = os.path.join(AVATAR_PATH, 'avatar')
+    print AVATAR_PATH
     @staticmethod
     def init_app(app):
         pass

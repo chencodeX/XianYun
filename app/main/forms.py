@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,TextAreaField,BooleanField,SelectField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Required,Length,Email,Regexp
 from  wtforms import ValidationError
 from ..model import Role,User
@@ -44,3 +45,7 @@ class EditProfileAdminForm(FlaskForm):
     def validate_username(self,field):
         if field.data != self.user.username and User.query.filter_by(username=field.data).first():
             raise ValidationError(u'用户名已存在')
+
+class ChangeAvatarForm(FlaskForm):
+    uploadfile=FileField(u'上传头像',validators=[FileRequired(),FileAllowed(['jpg', 'png'], 'Images only!')])
+    submit = SubmitField(u'提交')
