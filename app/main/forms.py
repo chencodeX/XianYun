@@ -1,8 +1,8 @@
 #!/usr/bin/evn python
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import StringField,SubmitField,TextAreaField,BooleanField,SelectField
-from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms import StringField,SubmitField,TextAreaField,BooleanField,SelectField,FileField
+from flask_wtf.file import FileAllowed, FileRequired
 from wtforms.validators import Required,Length,Email,Regexp
 from  wtforms import ValidationError
 from ..model import Role,User
