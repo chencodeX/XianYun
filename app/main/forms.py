@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,TextAreaField,BooleanField,SelectField,FileField
+from flask_pagedown.fields import PageDownField
 from flask_wtf.file import FileAllowed, FileRequired
 from wtforms.validators import Required,Length,Email,Regexp
 from  wtforms import ValidationError
@@ -49,3 +50,7 @@ class EditProfileAdminForm(FlaskForm):
 class ChangeAvatarForm(FlaskForm):
     uploadfile=FileField(u'上传头像',validators=[FileRequired(),FileAllowed(['jpg', 'png'], 'Images only!')])
     submit = SubmitField(u'提交')
+
+class PostForm(FlaskForm):
+    body = PageDownField(u'诉我所思~',validators=[Required()])
+    submit = SubmitField(u'发表')

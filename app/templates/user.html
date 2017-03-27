@@ -22,6 +22,7 @@
         {% endif %}
         {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
         <p>注册时间 {{ moment(user.member_since).format('LL') }}. <br>最后活跃 {{ moment(user.last_seen).fromNow() }}.</p>
+        <p>{{ user.posts.count() }} 条微博</p>
         <p>
             {% if user == current_user %}
             <a class="btn btn-default" href="{{ url_for('.edit_avatar') }}">修改头像</a>
@@ -33,4 +34,11 @@
         </p>
     </div>
 </div>
+<h3>{{ user.username }}的微博</h3>
+{% include '_posts.html' %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+</div>
+{% endif %}
 {% endblock%}

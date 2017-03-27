@@ -16,6 +16,7 @@ class Config:
     FLASKY_MAIL_SUBJECT_PREFIX = '[XianYun]'
     FLASKY_MAIL_SENDER = 'XianYun Admin <656558837@qq.com>'
     FLASK_ADMIN = '1105234003@qq.com'
+    FLASKY_POSTS_PER_PAGE = 20
 
     AVATAR_PATH = os.path.join(os.getcwd(),'app')
     AVATAR_PATH = os.path.join(AVATAR_PATH, 'static')
@@ -26,7 +27,7 @@ class Config:
         pass
 class  DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:root06@localhost/xianyun_test'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:moji_dev@localhost/xianyun_test'
 
 class TestingConfig(Config):
     TESTING = True
