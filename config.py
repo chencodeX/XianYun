@@ -26,7 +26,7 @@ class Config:
         pass
 class  DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:root06@localhost/xianyun_test'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:moji_dev@localhost/xianyun_test'
 
 class TestingConfig(Config):
     TESTING = True
