@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Xianyun- 修改头像{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>修改头像</h1>
+</div>
+<div class="col-md-4">
+    <form action = "" method = "post" enctype=multipart/form-data>
+        <input type = "file" name = file>
+        <input type = "submit" value = 提交>
+    </form>
+</div>
+{% endblock %}
