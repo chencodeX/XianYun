@@ -95,11 +95,19 @@ def edit_profile_admin(id):
 @login_required
 def edit_avatar():
     form = ChangeAvatarForm()
+    print '1'
     if form.validate_on_submit():
+        print '2'
         AVATAR_BASE_PATH = current_app.config['AVATAR_PATH']
+        print '3'
         current_user.avatar_base = hashlib.md5((current_user.email+current_user.avatar_base).encode('utf-8')).hexdigest()
+        print '4'
         base_path_1 = os.path.join(AVATAR_BASE_PATH, current_user.avatar_base + '.png')
+        print '5'
         form.uploadfile.data.save(base_path_1)
+        print '6'
         db.session.add(current_user)
+        print '7'
         return redirect(url_for('.user',username = current_user.username))
+
     return render_template('edit_avatar.html',form = form)
