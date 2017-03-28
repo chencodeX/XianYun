@@ -52,3 +52,7 @@ class ChangeAvatarForm(FlaskForm):
 class PostForm(FlaskForm):
     body = PageDownField(u'诉我所思~',validators=[Required()])
     submit = SubmitField(u'发表')
+
+class CommentForm(FlaskForm):
+    body = StringField(u'评论:',validators=[Required()])
+    submit = SubmitField(u'发表')
