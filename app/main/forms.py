@@ -23,9 +23,7 @@ class EditProfileForm(FlaskForm):
 class EditProfileAdminForm(FlaskForm):
     email = StringField(u'邮箱地址',validators=[Required(),Length(1,64),Email()])
     username = StringField(u'用户名', validators=[
-        Required(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
-                                          u'Usernames must have only letters, '
-                                          u'numbers, dots or underscores')])
+        Required(), Length(1, 64)])
     confirmed = BooleanField(u'已验证')
     role = SelectField(u'用户角色', coerce=int)
 
@@ -48,7 +46,7 @@ class EditProfileAdminForm(FlaskForm):
             raise ValidationError(u'用户名已存在')
 
 class ChangeAvatarForm(FlaskForm):
-    uploadfile=FileField(u'上传头像',validators=[FileRequired(),FileAllowed(['jpg', 'png'], 'Images only!')])
+    uploadfile=FileField(u'上传头像',validators=[FileRequired(),FileAllowed(['jpg', 'png'], u'只能上传PNG或JPG格式的图片作为头像！')])
     submit = SubmitField(u'提交')
 
 class PostForm(FlaskForm):
