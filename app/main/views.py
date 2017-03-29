@@ -226,7 +226,7 @@ def follow(username):
         flash(u'您已经在关注此用户。')
         return redirect(url_for('.user', username=username))
     current_user.follow(user)
-    flash(u'关注%s成功~'% str(username))
+    flash(u'关注%s成功~'% username)
     return redirect(url_for('.user', username=username))
 
 
